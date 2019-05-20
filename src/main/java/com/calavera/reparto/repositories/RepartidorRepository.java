@@ -21,6 +21,8 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 public interface RepartidorRepository extends PagingAndSortingRepository<Repartidor, Long>, RepartidorRepositoryCustomDistancia {
 
     Repartidor findByDni(@Param("dni") String dni);///repartidor/search/findByDni?dni=2
+    @Override
+    Repartidor repartidorCercano(@Param("latitud") double latitud, @Param("longitud") double longitud);
    // List<Repartidor> findByName(@Param("nombre") String nombre);
    // Repartidor findClosest(@Param("latitud") double latitud,@Param("longitud")  double longitud);
     
