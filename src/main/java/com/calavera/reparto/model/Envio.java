@@ -35,7 +35,7 @@ public class Envio implements Serializable {
     private Repartidor repartidor;
     @ManyToOne
     private Cliente cliente;
-    private int idClienteOrigen;
+    private Long idClienteOrigen;
 
     public Long getId() {
         return id;
@@ -127,11 +127,11 @@ public class Envio implements Serializable {
 
 
 
-    public int getIdClienteOrigen() {
+    public Long getIdClienteOrigen() {
         return idClienteOrigen;
     }
 
-    public void setIdClienteOrigen(int idClienteOrigen) {
+    public void setIdClienteOrigen(Long idClienteOrigen) {
         this.idClienteOrigen = idClienteOrigen;
     }
 

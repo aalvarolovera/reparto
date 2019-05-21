@@ -11,18 +11,18 @@ package com.calavera.reparto.repositories;
  */
 
 import com.calavera.reparto.model.Repartidor;
-import java.util.List;
+// import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "repartidor", path = "repartidor")
-public interface RepartidorRepository extends PagingAndSortingRepository<Repartidor, Long>, RepartidorRepositoryCustomDistancia {
+public interface RepartidorRepository extends PagingAndSortingRepository<Repartidor, Long> { // , RepartidorRepositoryCustomDistancia
 
     Repartidor findByDni(@Param("dni") String dni);///repartidor/search/findByDni?dni=2
-    @Override
-    Repartidor repartidorCercano(@Param("latitud") double latitud, @Param("longitud") double longitud);
+
+  //  Repartidor repartidorCercano(@Param("latitud") double latitud, @Param("longitud") double longitud);
    // List<Repartidor> findByName(@Param("nombre") String nombre);
    // Repartidor findClosest(@Param("latitud") double latitud,@Param("longitud")  double longitud);
     
