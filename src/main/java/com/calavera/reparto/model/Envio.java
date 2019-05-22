@@ -17,7 +17,6 @@ import javax.persistence.ManyToOne;
  * @author admin
  */
 @Entity
-
 public class Envio implements Serializable {
 
     @Id
@@ -25,17 +24,18 @@ public class Envio implements Serializable {
     private Long id;
     private String estado;
     private String detalles;
+    private String fecha;
     private String direccionOrigen;
     private String direccionDestino;
-    private double latitudOrigen;
-    private double longitudOrigen;
-    private double latitudDestino;
-    private double longitudDestino;
+    private double latitud;
+    private double longitud;
     @ManyToOne
     private Repartidor repartidor;
     @ManyToOne
     private Cliente cliente;
     private Long idClienteOrigen;
+    
+    
 
     public Long getId() {
         return id;
@@ -77,36 +77,20 @@ public class Envio implements Serializable {
         this.direccionDestino = direccionDestino;
     }
 
-    public double getLatitudOrigen() {
-        return latitudOrigen;
+    public double getLatitud() {
+        return latitud;
     }
 
-    public void setLatitudOrigen(double latitudOrigen) {
-        this.latitudOrigen = latitudOrigen;
+    public void setLatitud(double latitudOrigen) {
+        this.latitud = latitudOrigen;
     }
 
-    public double getLongitudOrigen() {
-        return longitudOrigen;
+    public double getLongitud() {
+        return longitud;
     }
 
-    public void setLongitudOrigen(double longitudOrigen) {
-        this.longitudOrigen = longitudOrigen;
-    }
-
-    public double getLatitudDestino() {
-        return latitudDestino;
-    }
-
-    public void setLatitudDestino(double latitudDestino) {
-        this.latitudDestino = latitudDestino;
-    }
-
-    public double getLongitudDestino() {
-        return longitudDestino;
-    }
-
-    public void setLongitudDestino(double longitudDestino) {
-        this.longitudDestino = longitudDestino;
+    public void setLongitud(double longitudOrigen) {
+        this.longitud = longitudOrigen;
     }
 
     public Repartidor getRepartidor() {
@@ -133,6 +117,14 @@ public class Envio implements Serializable {
 
     public void setIdClienteOrigen(Long idClienteOrigen) {
         this.idClienteOrigen = idClienteOrigen;
+    }
+
+    public String getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
     }
 
 }

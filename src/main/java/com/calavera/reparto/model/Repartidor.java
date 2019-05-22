@@ -10,7 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 /**
  *
@@ -23,8 +22,11 @@ public class Repartidor implements Serializable {
     private String nombre;
     private String apellidos;
     private String dni;
+    private boolean disponible;
     private double latitud;
     private double longitud;
+ //   @OneToMany
+ //   private Envio envio;
 //    @ManyToOne
 //    private Envio envio;
 
@@ -83,5 +85,13 @@ public class Repartidor implements Serializable {
 //    public void setEnvio(Envio envio) {
 //        this.envio = envio;
 //    }
+
+    public boolean isDisponible() {
+        return disponible;
+    }
+
+    public void setDisponible(boolean disponible) {
+        this.disponible = disponible;
+    }
     
 }
