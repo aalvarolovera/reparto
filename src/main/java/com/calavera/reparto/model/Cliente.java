@@ -24,6 +24,7 @@ public class Cliente implements Serializable {
     private String dni;
     private double latitudOrigen;
     private double longitudOrigen;
+    //!!!!!!!!!!!!!
     private double latitudDestino;
     private double longitudDestino;
     private String direccionOrigen;

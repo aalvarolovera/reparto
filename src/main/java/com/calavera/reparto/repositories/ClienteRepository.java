@@ -20,6 +20,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(collectionResourceRel = "cliente", path = "cliente")
 public interface ClienteRepository extends PagingAndSortingRepository<Cliente, Long> {
 
-    List<Cliente> findByDni(@Param("dni") String dni);
-
+    Cliente findByDni(@Param("dni") String dni);
+    List<Cliente> findByNombre(@Param("dni") String dni);
+    List<Cliente> findByApellidos(@Param("apellidos") String apellidos);
 }

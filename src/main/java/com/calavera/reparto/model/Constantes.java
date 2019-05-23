@@ -11,4 +11,7 @@ package com.calavera.reparto.model;
  */
 public class Constantes {
     public static final double RADIOTIERRA = 6371;
+    public static final String ENVIOPENDIENTE="Pendiente";
+    public static final String ENVIOREPARTO="Reparto";
+    public static final String ENVIOFINALIZADO="Finalizado";
 }
