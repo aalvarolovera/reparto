@@ -279,43 +279,20 @@ public class RepartidorController {
     }
     
     /**
-     * Devuelve los todos los envios que tiene o ha tenido un cliente
+     * Devuelve los todos los envios que tiene o ha tenido un Repartidor
      * 
      * @param id
      * @return envios
      */
-    @GetMapping("/cliente/{id}/historial/recibidos")
-    List<Envio> historialEnviosRecibidos(@PathVariable Long id) {
+    @GetMapping("/repartidor/{id}/historial/envios")
+    List<Envio> historialEnvios(@PathVariable Long id) {
 
-        Cliente cliente = repository.findById(id)
-                .orElseThrow(() -> new ClienteNotFoundException(id));
-        List<Envio> envios = repositoryEnvio.findByClienteId(id);
-
-        return envios;
-    }
-    
-     // Single item
-    /**
-     * Devuelve los todos los envios que a mandado un cliente
-     * 
-     * @param id
-     * @return envios
-     */
-    @GetMapping("/repartidor/{id}/historial")
-    List<Envio> historialEnviosEnviados(@PathVariable String dni, @PathVariable Long id) {
-
-        Repartidor rpartidor = repartidorRepo.findById(id)
-                .orElseThrow(() -> new RepartidorNotFoundException(id));
-        List<Envio> envios = envioRepo.findByRepartidorDni(dni);
+        Repartidor repartidor = repartidorRepo.findById(id)
+                .orElseThrow(() -> new RepartidorNotFoundException(id));   
+        List<Envio> envios = envioRepo.findByRepartidorId(id);
 
         return envios;
     }
-
-    @DeleteMapping("/cliente/{id}")
-    void deleteCliente(@PathVariable Long id) {
-        repository.deleteById(id);
-    }
-    
     
 }
 /*

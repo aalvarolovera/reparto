@@ -20,7 +20,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 public interface EnvioRepository extends PagingAndSortingRepository<Envio, Long>{
     
     List<Envio> findByEstado(@Param("estado") String estado);
-    Envio findByRepartidorId(@Param("id")Long repartidorId);
+    List<Envio> findByRepartidorId(@Param("id")Long repartidorId);
     List<Envio> findByRepartidorDni(@Param("dni")String repartidorDni);
     List<Envio> findByClienteId(@Param("id")Long clienteId);
     List<Envio> findByIdClienteOrigen(@Param("id")Long idClienteOrigen);
