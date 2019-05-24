@@ -6,6 +6,7 @@
 package com.calavera.reparto.model;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,7 +29,9 @@ public class Envio implements Serializable {
     private String direccionOrigen;
     private String direccionDestino;
     private double latitud;
-    private double longitud;
+    private double longitud; 
+ //   private double latitudDestino;
+  //  private double longitudDestino;
     @ManyToOne
     private Repartidor repartidor;
     @ManyToOne
@@ -109,8 +112,6 @@ public class Envio implements Serializable {
         this.cliente = cliente;
     }
 
-
-
     public Long getIdClienteOrigen() {
         return idClienteOrigen;
     }
@@ -126,5 +127,21 @@ public class Envio implements Serializable {
     public void setFecha(String fecha) {
         this.fecha = fecha;
     }
+/*
+    public double getLatitudDestino() {
+        return latitudDestino;
+    }
 
+    public void setLatitudDestino(double latitudDestino) {
+        this.latitudDestino = latitudDestino;
+    }
+
+    public double getLongitudDestino() {
+        return longitudDestino;
+    }
+
+    public void setLongitudDestino(double longitudDestino) {
+        this.longitudDestino = longitudDestino;
+    }
+*/
 }

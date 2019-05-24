@@ -59,11 +59,20 @@ class EnvioController {
                 .orElseThrow(() -> new ClienteNotFoundException(id));
         Cliente clienteDestino = clienteRepository.findById(idClienteDestino)
                 .orElseThrow(() -> new ClienteNotFoundException(idClienteDestino));
-
+        /*
+        "detalles": null,
+        "fecha": null,
+        "direccionOrigen": null,
+        "direccionDestino": null,
+        */
         newEnvio.setIdClienteOrigen(id);
         newEnvio.setCliente(clienteDestino);
-        newEnvio.setLatitud(cliente.getLatitudOrigen());
-        newEnvio.setLongitud(cliente.getLongitudOrigen());
+        newEnvio.setLatitud(cliente.getLatitud());
+        newEnvio.setLongitud(cliente.getLongitud());
+        newEnvio.setDireccionOrigen(cliente.getDireccion());
+        //Cambia la direccón de destino del paquete a la del cliente
+        newEnvio.setDireccionDestino(clienteDestino.getDireccion());
+        
         newEnvio.setEstado(Constantes.ENVIOPENDIENTE);
         envioRepository.save(newEnvio);
 

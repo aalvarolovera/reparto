@@ -55,14 +55,14 @@ public class ClienteController {
         return repository.findById(id)
                 .map(cliente -> {
                     cliente.setNombre(newCliente.getNombre());
-                    cliente.setDireccionOrigen(newCliente.getDireccionOrigen());
-                    cliente.setDireccionDestino(newCliente.getDireccionDestino());
+                    cliente.setDireccion(newCliente.getDireccion());
+                   // cliente.setDireccionDestino(newCliente.getDireccionDestino());
                     cliente.setApellidos(newCliente.getApellidos());
                     cliente.setDni(newCliente.getDni());
-                    cliente.setLatitudOrigen(newCliente.getLatitudOrigen());
-                    cliente.setLongitudOrigen(newCliente.getLongitudOrigen());
-                    cliente.setLatitudDestino(newCliente.getLatitudDestino());
-                    cliente.setLongitudDestino(newCliente.getLongitudDestino());
+                    cliente.setLatitud(newCliente.getLatitud());
+                    cliente.setLongitud(newCliente.getLongitud());
+                   // cliente.setLatitudDestino(newCliente.getLatitudDestino());
+                   // cliente.setLongitudDestino(newCliente.getLongitudDestino());
                     return repository.save(cliente);
                 })
                 .orElseGet(() -> {

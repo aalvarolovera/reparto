@@ -6,6 +6,7 @@
 package com.calavera.reparto.model;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,6 +26,8 @@ public class Repartidor implements Serializable {
     private boolean disponible;
     private double latitud;
     private double longitud;
+    @Column(nullable = true)
+    private Long envioId;
  //   @OneToMany
  //   private Envio envio;
 //    @ManyToOne
@@ -92,6 +95,14 @@ public class Repartidor implements Serializable {
 
     public void setDisponible(boolean disponible) {
         this.disponible = disponible;
+    }
+
+    public Long getEnvioId() {
+        return envioId;
+    }
+
+    public void setEnvioId(Long envioId) {
+        this.envioId = envioId;
     }
     
 }

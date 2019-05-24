@@ -6,6 +6,7 @@
 package com.calavera.reparto.model;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,13 +23,15 @@ public class Cliente implements Serializable {
     private String nombre;
     private String apellidos;
     private String dni;
-    private double latitudOrigen;
-    private double longitudOrigen;
+    @Column(nullable = true)
+    private double latitud;
+    @Column(nullable = true)
+    private double longitud;
     //!!!!!!!!!!!!!
-    private double latitudDestino;
-    private double longitudDestino;
-    private String direccionOrigen;
-    private String direccionDestino;
+   // private double latitudDestino;
+  //  private double longitudDestino;
+    private String direccion;
+  //  private String direccionDestino;
 
     public Long getId() {
         return id;
@@ -62,22 +65,22 @@ public class Cliente implements Serializable {
         this.dni = dni;
     }
 
-    public double getLatitudOrigen() {
-        return latitudOrigen;
+    public double getLatitud() {
+        return latitud;
     }
 
-    public void setLatitudOrigen(double latitudOrigen) {
-        this.latitudOrigen = latitudOrigen;
+    public void setLatitud(double latitud) {
+        this.latitud = latitud;
     }
 
-    public double getLongitudOrigen() {
-        return longitudOrigen;
+    public double getLongitud() {
+        return longitud;
     }
 
-    public void setLongitudOrigen(double longitudOrigen) {
-        this.longitudOrigen = longitudOrigen;
+    public void setLongitud(double longitud) {
+        this.longitud = longitud;
     }
-
+/*
     public double getLatitudDestino() {
         return latitudDestino;
     }
@@ -93,15 +96,15 @@ public class Cliente implements Serializable {
     public void setLongitudDestino(double longitudDestino) {
         this.longitudDestino = longitudDestino;
     }
-
-    public String getDireccionOrigen() {
-        return direccionOrigen;
+*/
+    public String getDireccion() {
+        return direccion;
     }
 
-    public void setDireccionOrigen(String direccionOrigen) {
-        this.direccionOrigen = direccionOrigen;
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
     }
-
+/*
     public String getDireccionDestino() {
         return direccionDestino;
     }
@@ -110,6 +113,6 @@ public class Cliente implements Serializable {
         this.direccionDestino = direccionDestino;
     }
     
-    
+   */ 
     
 }

@@ -68,24 +68,32 @@ public class RepartidorController {
     @PutMapping("/repartidor/{repartidorId}/envio/{envioId}/finalizado")
     Repartidor repartidorEntregaEnvio(@RequestBody Repartidor rep,
             @PathVariable Long repartidorId, @PathVariable Long envioId) {
-            //NO CAMBIA EL ENVIO_ID de la tabla REPARTIDOR !!!!!!!
+        //NO CAMBIA EL ENVIO_ID de la tabla REPARTIDOR !!!!!!!
         envioRepo.findById(envioId)
                 .orElseThrow(() -> new EnvioNotFoundException(envioId));
         repartidorRepo.findById(repartidorId)
                 .map(repartidor -> {
-                    repartidor.setDni(rep.getDni());
-                    repartidor.setNombre(rep.getNombre());
-                    repartidor.setApellidos(rep.getApellidos());
+                    //  repartidor.setDni(rep.getDni());
+                    // repartidor.setNombre(rep.getNombre());
+                    // repartidor.setApellidos(rep.getApellidos());
                     repartidor.setLatitud(rep.getLatitud());
                     repartidor.setLongitud(rep.getLongitud());
                     //Comprueba si el envio tiene ese repartidor asignado
                     //y si el envio está en estado "Pendiente"
                     if (envioRepo.findById(envioId).get().getRepartidor().getId().equals(repartidorId)
-                            && (envioRepo.findById(envioId).get().getEstado().equals(Constantes.ENVIOPENDIENTE))) {
+                            && ((envioRepo.findById(envioId).get().getEstado()
+                                    .equals(Constantes.ENVIOPENDIENTE)))
+                            || (envioRepo.findById(envioId).get().getEstado().equals(Constantes.ENVIOREPARTO))) {
 
-                        Envio envioFinalizado = envioRepo.findByRepartidorId(repartidorId);
-                        repartidor.setDisponible(true);
+                        Repartidor repTermina = repartidorRepo.findById(repartidorId).get();
+                        // Envio envioFinalizado = envioRepo.findByRepartidorId(repartidorId);
+                        Envio envioFinalizado = envioRepo.findById(envioId).get();
+                        repTermina.setDisponible(true);
                         envioFinalizado.setEstado(Constantes.ENVIOFINALIZADO);
+                        repTermina.setEnvioId(null);//!!!!!!!!!!
+                        // envioFinalizado.setLatitudDestino(repartidor.getLatitud());
+                        // envioFinalizado.setLongitudDestino(repartidor.getLongitud());
+                        repartidorRepo.save(repTermina);
                         envioRepo.save(envioFinalizado);
                     }
                     //repartidor.setDisponible(true);
@@ -111,10 +119,10 @@ public class RepartidorController {
                     repartidor.setLatitud(rep.getLatitud());
                     repartidor.setLongitud(rep.getLongitud());
                     if (repartidor.isDisponible()) {
-                       Envio envioAsignado = AsignarEnvioPendienteCercano(repartidor);
-                       envioAsignado.setRepartidor(repartidor);    
-                      
-                       //envioRepo.save(envioAsignado);
+                        Envio envioAsignado = AsignarEnvioPendienteCercano(repartidorRepo.findById(id).get());
+                        envioAsignado.setRepartidor(repartidorRepo.findById(id).get());
+
+                        //envioRepo.save(envioAsignado);
                     }
                     return repartidorRepo.save(repartidor);
                 })
@@ -135,6 +143,26 @@ public class RepartidorController {
                     repartidor.setDisponible(repartidor.isDisponible());
                     repartidor.setLatitud(newRepartidor.getLatitud());
                     repartidor.setLongitud(newRepartidor.getLongitud());
+                    repartidor.setEnvioId(newRepartidor.getEnvioId()); //!!!!!!!!!!!!!!!!!!!
+                    return repartidorRepo.save(repartidor);
+                })
+                .orElseGet(() -> {
+                    newRepartidor.setId(id);
+                    return repartidorRepo.save(newRepartidor);
+                });
+    }
+
+    //PROBAR!!!!!!!!!!!!!!
+    @PutMapping("/repartidor/dis/{id}/true")
+    Repartidor updateRepartidorEstado(@RequestBody Repartidor newRepartidor, @PathVariable Long id) {
+
+        //Aquí puedes obtener un listado de los envios y escoger el que esté sin asignar aun
+        // al repartidor, te pongo una respuesta estatica de ejemplo que contiene el primer envio del repositorio
+        //return envioRepo.findAll().iterator().next();
+        return repartidorRepo.findById(id)
+                .map(repartidor -> {
+                    repartidor.setDisponible(true);
+                    //  repartidor.setDni(newRepartidor.getDni());
                     return repartidorRepo.save(repartidor);
                 })
                 .orElseGet(() -> {
@@ -226,9 +254,10 @@ public class RepartidorController {
         if (enCercano != null) {
             enCercano.setRepartidor(repartidor);
             repartidor.setDisponible(false);
+            repartidor.setEnvioId(enCercano.getId());//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             enCercano.setEstado(Constantes.ENVIOREPARTO);
             envioRepo.save(enCercano);
-           // repartidorRepo.save(repartidor); !!!!!!!!!!!!!!!!!!!!!!!!!!
+            // repartidorRepo.save(repartidor); !!!!!!!!!!!!!!!!!!!!!!!!!!
         }
         //Mirar si se puede dar un mensaje si no hay paquetes para dar
         return enCercano;
