@@ -23,4 +23,5 @@ public interface ClienteRepository extends PagingAndSortingRepository<Cliente, L
     Cliente findByDni(@Param("dni") String dni);
     List<Cliente> findByNombre(@Param("dni") String dni);
     List<Cliente> findByApellidos(@Param("apellidos") String apellidos);
+ //   List<Cliente> findByIdClienteOrigen(@Param("idClienteOreigen")Long idClienteOrigen);
 }

@@ -42,7 +42,41 @@ class EnvioController {
     Envio newEnvio(@RequestBody Envio newEnvio) {
         return envioRepository.save(newEnvio);
     }
- 
+    //PORBAR!!!!!!!!!!!!!!
+    /**
+     * Un cliente registrado cuyo id entra por paramentro indica el 
+     * cliente receptor del envio otro cliente registrado
+     * 
+     * @param id
+     * @param envioId
+     * @param idClienteDestino
+     * @param newEnvio
+     * @return 
+     */
+    @PutMapping("/envio/{envioId}/cliente/{id}/enviar/{idClienteDestino}")
+    Envio EnvioFromCliente(@PathVariable Long id, @PathVariable Long envioId,
+            @PathVariable Long idClienteDestino, @RequestBody Envio newEnvio) {
+        //  Cliente c = clienteRepository.findById(id).get();
+        Envio envio = envioRepository.findById(envioId)
+                .orElseThrow(() -> new EnvioNotFoundException(id));
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new ClienteNotFoundException(id));
+        Cliente clienteDestino = clienteRepository.findById(idClienteDestino)
+                .orElseThrow(() -> new ClienteNotFoundException(idClienteDestino));
+        
+        envio.setIdClienteOrigen(id);
+        envio.setCliente(clienteDestino);
+        envio.setLatitud(cliente.getLatitud());
+        envio.setLongitud(cliente.getLongitud());
+        envio.setDireccionOrigen(cliente.getDireccion());
+        //Cambia la direccón de destino del paquete a la del cliente
+        envio.setDireccionDestino(clienteDestino.getDireccion());  
+        envio.setEstado(Constantes.ENVIOPENDIENTE);
+        envioRepository.save(envio);
+
+        return envioRepository.save(newEnvio);
+    }
+    
     /**
      * Un cliente registrado cuyo id entra por paramentro hace un envio nuevo a
      * otro cliente registrado (@RequestBody Envio newEnvio)
@@ -59,20 +93,14 @@ class EnvioController {
                 .orElseThrow(() -> new ClienteNotFoundException(id));
         Cliente clienteDestino = clienteRepository.findById(idClienteDestino)
                 .orElseThrow(() -> new ClienteNotFoundException(idClienteDestino));
-        /*
-        "detalles": null,
-        "fecha": null,
-        "direccionOrigen": null,
-        "direccionDestino": null,
-        */
+        
         newEnvio.setIdClienteOrigen(id);
         newEnvio.setCliente(clienteDestino);
         newEnvio.setLatitud(cliente.getLatitud());
         newEnvio.setLongitud(cliente.getLongitud());
         newEnvio.setDireccionOrigen(cliente.getDireccion());
         //Cambia la direccón de destino del paquete a la del cliente
-        newEnvio.setDireccionDestino(clienteDestino.getDireccion());
-        
+        newEnvio.setDireccionDestino(clienteDestino.getDireccion());  
         newEnvio.setEstado(Constantes.ENVIOPENDIENTE);
         envioRepository.save(newEnvio);
 

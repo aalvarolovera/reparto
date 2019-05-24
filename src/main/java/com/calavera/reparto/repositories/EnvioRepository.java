@@ -21,8 +21,9 @@ public interface EnvioRepository extends PagingAndSortingRepository<Envio, Long>
     
     List<Envio> findByEstado(@Param("estado") String estado);
     Envio findByRepartidorId(@Param("id")Long repartidorId);
+    List<Envio> findByRepartidorDni(@Param("dni")String repartidorDni);
     List<Envio> findByClienteId(@Param("id")Long clienteId);
-    List<Envio> findByidClienteOrigen(@Param("id")Long idClienteOrigen);
+    List<Envio> findByIdClienteOrigen(@Param("id")Long idClienteOrigen);
    // List<Envio> findByRepartidor(@Param("Repartidor") Long id);
     // Envio findNearest(@Param ("latitud") Double latitud,@Param ("longitud")Double longitud);
 }

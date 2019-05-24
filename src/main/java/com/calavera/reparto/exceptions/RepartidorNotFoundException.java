@@ -13,4 +13,8 @@ public class RepartidorNotFoundException extends RuntimeException {
     public RepartidorNotFoundException(Long id) {
         super("Could not find repartidor " + id);
     }
+    
+    public RepartidorNotFoundException(String dni) {
+        super("Could not find repartidor: " + dni);
+    }
 }

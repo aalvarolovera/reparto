@@ -23,10 +23,10 @@ public interface RepartidorRepository extends PagingAndSortingRepository<Reparti
 
     Repartidor findByDni(@Param("dni") String dni);///repartidor/search/findByDni?dni=2
     List<Repartidor>findByDisponible(@Param("disponible")boolean disponible);
+    List<Repartidor> findByName(@Param("nombre") String nombre);
    // List<Repartidor>findByOcupado(@Param("envio_Id")Long envio_I);
-  //  List<Repartidor>findByOcupado(@Param("ocupado")boolean ocupado);
   //  Repartidor repartidorCercano(@Param("latitud") double latitud, @Param("longitud") double longitud);
-   // List<Repartidor> findByName(@Param("nombre") String nombre);
+    
    // Repartidor findClosest(@Param("latitud") double latitud,@Param("longitud")  double longitud);
     
 }

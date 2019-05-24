@@ -11,6 +11,7 @@ import com.calavera.reparto.model.Cliente;
 import com.calavera.reparto.model.Envio;
 import com.calavera.reparto.repositories.ClienteRepository;
 import com.calavera.reparto.repositories.EnvioRepository;
+import java.util.List;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,9 +28,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class ClienteController {
 
     private final ClienteRepository repository;
+    private final EnvioRepository repositoryEnvio;
 
-    ClienteController(ClienteRepository repository) {
+    ClienteController(ClienteRepository repository, EnvioRepository repositoryEnvio) {
         this.repository = repository;
+        this.repositoryEnvio = repositoryEnvio;
     }
 
     @GetMapping("/cliente")
@@ -56,19 +59,52 @@ public class ClienteController {
                 .map(cliente -> {
                     cliente.setNombre(newCliente.getNombre());
                     cliente.setDireccion(newCliente.getDireccion());
-                   // cliente.setDireccionDestino(newCliente.getDireccionDestino());
+                    // cliente.setDireccionDestino(newCliente.getDireccionDestino());
                     cliente.setApellidos(newCliente.getApellidos());
                     cliente.setDni(newCliente.getDni());
                     cliente.setLatitud(newCliente.getLatitud());
                     cliente.setLongitud(newCliente.getLongitud());
-                   // cliente.setLatitudDestino(newCliente.getLatitudDestino());
-                   // cliente.setLongitudDestino(newCliente.getLongitudDestino());
+                    // cliente.setLatitudDestino(newCliente.getLatitudDestino());
+                    // cliente.setLongitudDestino(newCliente.getLongitudDestino());
                     return repository.save(cliente);
                 })
                 .orElseGet(() -> {
                     newCliente.setId(id);
                     return repository.save(newCliente);
                 });
+    }
+    // Single item
+    /**
+     * Devuelve los todos los envios que tiene o ha tenido un cliente
+     * 
+     * @param id
+     * @return envios
+     */
+    @GetMapping("/cliente/{id}/historial/recibidos")
+    List<Envio> historialEnviosRecibidos(@PathVariable Long id) {
+
+        Cliente cliente = repository.findById(id)
+                .orElseThrow(() -> new ClienteNotFoundException(id));
+        List<Envio> envios = repositoryEnvio.findByClienteId(id);
+
+        return envios;
+    }
+    
+     // Single item
+    /**
+     * Devuelve los todos los envios que a mandado un cliente
+     * 
+     * @param id
+     * @return envios
+     */
+    @GetMapping("/cliente/{id}/historial/enviados")
+    List<Envio> historialEnviosEnviados(@PathVariable Long id) {
+
+        Cliente cliente = repository.findById(id)
+                .orElseThrow(() -> new ClienteNotFoundException(id));
+        List<Envio> envios = repositoryEnvio.findByIdClienteOrigen(id);
+
+        return envios;
     }
 
     @DeleteMapping("/cliente/{id}")
