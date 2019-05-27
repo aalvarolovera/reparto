@@ -51,7 +51,13 @@ public class ClienteController {
         return repository.findById(id)
                 .orElseThrow(() -> new ClienteNotFoundException(id));
     }
-
+    /**
+     * Actaliza un cliente, si el Id que del parametro no existe crea uno nuevo 
+     * con ese id
+     * @param newCliente
+     * @param id
+     * @return 
+     */
     @PutMapping("/cliente/{id}")
     Cliente updateCliente(@RequestBody Cliente newCliente, @PathVariable Long id) {
 
@@ -73,10 +79,37 @@ public class ClienteController {
                     return repository.save(newCliente);
                 });
     }
+
+    /**
+     * Actaliza las coordenadas del cliente y su dirección
+     *
+     * @param newCliente
+     * @param id
+     * @return Cliente clienteguardado
+     */
+    @PutMapping("/cliente/{id}/posicion")
+    Cliente updateClientePosicion(@RequestBody Cliente newCliente, @PathVariable Long id) {
+
+        return repository.findById(id)
+                .map(cliente -> {
+                    //cliente.setNombre(newCliente.getNombre());
+                    // cliente.setDireccion(newCliente.getDireccion());
+                    cliente.setDireccion(newCliente.getDireccion());
+                    // cliente.setApellidos(newCliente.getApellidos());
+                    //  cliente.setDni(newCliente.getDni());
+                    cliente.setLatitud(newCliente.getLatitud());
+                    cliente.setLongitud(newCliente.getLongitud());
+                    // cliente.setLatitudDestino(newCliente.getLatitudDestino());
+                    // cliente.setLongitudDestino(newCliente.getLongitudDestino());
+                    return repository.save(cliente);
+                })
+                .orElseThrow(() -> new ClienteNotFoundException(id));
+    }
+
     // Single item
     /**
      * Devuelve los todos los envios que tiene o ha tenido un cliente
-     * 
+     *
      * @param id
      * @return envios
      */
@@ -89,11 +122,11 @@ public class ClienteController {
 
         return envios;
     }
-    
-     // Single item
+
+    // Single item
     /**
      * Devuelve los todos los envios que a mandado un cliente
-     * 
+     *
      * @param id
      * @return envios
      */

@@ -67,7 +67,6 @@ public class RepartidorController {
     @PutMapping("/repartidor/{repartidorId}/envio/{envioId}/finalizado")
     Repartidor repartidorEntregaEnvio(@RequestBody Repartidor rep,
             @PathVariable Long repartidorId, @PathVariable Long envioId) {
-        //NO CAMBIA EL ENVIO_ID de la tabla REPARTIDOR !!!!!!!
         envioRepo.findById(envioId)
                 .orElseThrow(() -> new EnvioNotFoundException(envioId));
         repartidorRepo.findById(repartidorId)
@@ -103,8 +102,8 @@ public class RepartidorController {
     }
 
     /**
-     * Un repartidor actualiza su posición, si se encuentra cerca de un envio
-     * pendiente y el repartidor está libre le es asignado el envio
+     * Un repartidor actualiza su posición, y asigna los envios pendientes a los 
+     * repartidores disponibles
      *
      * @param Repartidor rep
      * @param id
@@ -117,12 +116,17 @@ public class RepartidorController {
                 .map(repartidor -> {
                     repartidor.setLatitud(rep.getLatitud());
                     repartidor.setLongitud(rep.getLongitud());
+                    asignarEnviosPendientes();
+                    //Asigna envios pendienttes a 
+                    //repartidores disponibles
+                    /*
                     if (repartidor.isDisponible()) {
                         Envio envioAsignado = AsignarEnvioPendienteCercano(repartidorRepo.findById(id).get());
                         envioAsignado.setRepartidor(repartidorRepo.findById(id).get());
 
                         //envioRepo.save(envioAsignado);
                     }
+                    */
                     return repartidorRepo.save(repartidor);
                 })
                 .orElseThrow(() -> new RepartidorNotFoundException(id));
@@ -151,70 +155,42 @@ public class RepartidorController {
                 });
     }
 
-    //PROBAR!!!!!!!!!!!!!!
-    @PutMapping("/repartidor/dis/{id}/true")
-    Repartidor updateRepartidorEstado(@RequestBody Repartidor newRepartidor, @PathVariable Long id) {
+    /**
+     * Cambia manualmente la disponibilidad del repartidor
+     * 
+     * @param id
+     * @return 
+     */
+    @PutMapping("/repartidor/dis/{id}/{disponible}")
+    Repartidor updateRepartidorDisponibilidad(@PathVariable Long id,
+            @PathVariable boolean disponible ) {
 
-        //Aquí puedes obtener un listado de los envios y escoger el que esté sin asignar aun
-        // al repartidor, te pongo una respuesta estatica de ejemplo que contiene el primer envio del repositorio
-        //return envioRepo.findAll().iterator().next();
         return repartidorRepo.findById(id)
                 .map(repartidor -> {
-                    repartidor.setDisponible(true);
+                    repartidor.setDisponible(disponible);
+                    repartidor.setEnvioId(null);
                     //  repartidor.setDni(newRepartidor.getDni());
                     return repartidorRepo.save(repartidor);
                 })
-                .orElseGet(() -> {
-                    newRepartidor.setId(id);
-                    return repartidorRepo.save(newRepartidor);
-                });
+                .orElseThrow(() -> new RepartidorNotFoundException(id));
     }
 
-    /**
-     * Comprueba todos los envios sin repartidor que estan pendientes y los
-     * asigna a los repartidores más cercanos a cada envio que se encuentran
-     * disponibles.
-     *
-     * @return List<Envio> listaEnvios asignados
-     *
-     * @GetMapping("/repartidor/asignar") List<Envio> asignarEnvios() {
-     * //Repartidor repartidorCercano; //Aquí puedes obtener un listado de los
-     * envios y escoger el que esté sin asignar aun // al repartidor, te pongo
-     * una respuesta estatica de ejemplo que contiene el primer envio del
-     * repositorio //return envioRepo.findAll().iterator().next(); List<Envio>
-     * listaEnviosSinRepartidor = envioRepo.findByRepartidorId(null); //
-     * List<Repartidor>listRepartidorDisponible =
-     * repartidorRepo.findByDisponible(true); for (Envio en :
-     * listaEnviosSinRepartidor) { if
-     * (en.getEstado().equals(Constantes.ENVIOPENDIENTE)) {
-     * en.setRepartidor(calcularRepartidorDisponibleCercano(en.getLatitud(),
-     * en.getLongitud())); en.getRepartidor().setDisponible(false); } } return
-     * listaEnviosSinRepartidor;//Ya si tienen repartidor }
-     */
     @DeleteMapping("/repartidor/{id}")
     void deleteRepartidor(@PathVariable Long id) {
         repartidorRepo.deleteById(id);
     }
 
-    @GetMapping(path = "/repartidor/cercano/{latitud}&{longitud}")
-    Repartidor repartidorCercano(@PathVariable double latitud, @PathVariable double longitud) {
-
-        List<Repartidor> listaRepartidores = (List<Repartidor>) repartidorRepo.findAll();
-        Repartidor reCercano = null;
-        double distancia = 0.0;
-        double distanciaMenor = distanciaCoord(latitud, longitud, listaRepartidores.get(0).getLatitud(), listaRepartidores.get(0).getLongitud());
-
-        for (Repartidor repar : listaRepartidores) {
-            distancia = distanciaCoord(latitud, longitud, repar.getLatitud(), repar.getLongitud());
-            if (distancia <= distanciaMenor) {
-                distanciaMenor = distanciaCoord(latitud, longitud, repar.getLatitud(), repar.getLongitud());
-                reCercano = repar;
-            }
-        }
-        return reCercano;
-        //return listaRepartidores.get(0);
-    }
-
+    
+    /**
+     * Calcula la distancia entre dos puntos, recibe las coordenadas
+     * latitud y longitud de cada.
+     * 
+     * @param lat1
+     * @param lng1
+     * @param lat2
+     * @param lng2
+     * @return 
+     */
     public static double distanciaCoord(double lat1, double lng1, double lat2, double lng2) {
 
         double dLat = Math.toRadians(lat2 - lat1);
@@ -229,39 +205,44 @@ public class RepartidorController {
         return distancia;
     }
 
-    /**
-     * Asigna envio pendiente más cercano al repartidor si existe uno
-     *
-     * @param repartidor
-     * @return envio
+    
+    /** 
+     * 
+     * Asigna los repartidores disponibles más cercanos a los envios con estado
+     * "Pendiente"
+     * 
+     * @return listaEnviosAsignados
      */
-    public Envio AsignarEnvioPendienteCercano(Repartidor repartidor) {
-        double latitudRepartidor = repartidor.getLatitud();
-        double longitudRepartidor = repartidor.getLongitud();
-        List<Envio> listaEnviosPendientes = envioRepo.findByEstado(Constantes.ENVIOPENDIENTE);//(List<Repartidor>) repartidorRepo.findAll();
-        Envio enCercano = null;
-        double distancia = 0.0;
-        double distanciaMenor = distanciaCoord(latitudRepartidor, longitudRepartidor, listaEnviosPendientes.get(0).getLatitud(), listaEnviosPendientes.get(0).getLongitud());
+    public List<Envio> asignarEnviosPendientes(){
+        List<Envio> listaEnviosPendientes = envioRepo.findByEstado(Constantes.ENVIOPENDIENTE);
+        Repartidor reCercano = null;
+        //double distancia = 0.0;
+        //double distanciaMenor = distanciaCoord(latitudEnvio, longitudEnvio, listaRepartidores.get(0).getLatitud(), listaRepartidores.get(0).getLongitud());
 
-        for (Envio en : listaEnviosPendientes) {
-            distancia = distanciaCoord(latitudRepartidor, longitudRepartidor, en.getLatitud(), en.getLongitud());
+        for (Envio envio : listaEnviosPendientes) {
+           reCercano = calcularRepartidorDisponibleCercano(envio.getLatitud(), envio.getLongitud());
+            
+           reCercano.setEnvioId(envio.getId());
+           reCercano.setDisponible(false);
+           /*
+            distancia = distanciaCoord(latitudEnvio, longitudEnvio, repar.getLatitud(), repar.getLongitud());
             if (distancia <= distanciaMenor) {
-                distanciaMenor = distancia;
-                enCercano = en;
+                distanciaMenor = distanciaCoord(latitudEnvio, longitudEnvio, repar.getLatitud(), repar.getLongitud());
+                reCercano = repar;
             }
+            */
         }
-        if (enCercano != null) {
-            enCercano.setRepartidor(repartidor);
-            repartidor.setDisponible(false);
-            repartidor.setEnvioId(enCercano.getId());//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            enCercano.setEstado(Constantes.ENVIOREPARTO);
-            envioRepo.save(enCercano);
-            // repartidorRepo.save(repartidor); !!!!!!!!!!!!!!!!!!!!!!!!!!
-        }
-        //Mirar si se puede dar un mensaje si no hay paquetes para dar
-        return enCercano;
+        return listaEnviosPendientes;
     }
-
+    
+    /**
+     * Recibe la latidud y longitud del envio, y calcula el repartidor 
+     * disponible más cercano
+     * 
+     * @param latitudEnvio
+     * @param longitudEnvio
+     * @return repartidorCerano
+     */
     public Repartidor calcularRepartidorDisponibleCercano(double latitudEnvio, double longitudEnvio) {
         List<Repartidor> listaRepartidores = repartidorRepo.findByDisponible(true);//(List<Repartidor>) repartidorRepo.findAll();
         Repartidor reCercano = null;
@@ -294,6 +275,68 @@ public class RepartidorController {
         return envios;
     }
     
+    /**
+     * Recomendable usar antes asignarEnviosPendientes
+     * 
+     * Asigna envio pendiente más cercano al repartidor si existe uno
+     *
+     * @param repartidor
+     * @return envio
+     */
+    public Envio asignarEnvioPendienteCercano(Repartidor repartidor) {
+        double latitudRepartidor = repartidor.getLatitud();
+        double longitudRepartidor = repartidor.getLongitud();
+        List<Envio> listaEnviosPendientes = envioRepo.findByEstado(Constantes.ENVIOPENDIENTE);//(List<Repartidor>) repartidorRepo.findAll();
+        Envio enCercano = null;
+        double distancia = 0.0;
+        double distanciaMenor = distanciaCoord(latitudRepartidor, longitudRepartidor, listaEnviosPendientes.get(0).getLatitud(), listaEnviosPendientes.get(0).getLongitud());
+
+        for (Envio en : listaEnviosPendientes) {
+            distancia = distanciaCoord(latitudRepartidor, longitudRepartidor, en.getLatitud(), en.getLongitud());
+            if (distancia <= distanciaMenor) {
+                distanciaMenor = distancia;
+                enCercano = en;
+            }
+        }
+        if (enCercano != null) {
+            enCercano.setRepartidor(repartidor);
+            repartidor.setDisponible(false);
+            repartidor.setEnvioId(enCercano.getId());//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            enCercano.setEstado(Constantes.ENVIOREPARTO);
+            envioRepo.save(enCercano);
+            // repartidorRepo.save(repartidor); !!!!!!!!!!!!!!!!!!!!!!!!!!
+        }
+        //Mirar si se puede dar un mensaje si no hay paquetes para dar
+        return enCercano;
+    }
+    
+    /**
+     * Recomendable usar antes asignarEnviosPendientes
+     * 
+     * Calcula el repartidor más cercano con respecto a la latitud y logitud
+     * introducidas
+     * @param latitud
+     * @param longitud
+     * @return repartidor
+     */
+    @GetMapping(path = "/repartidor/cercano/{latitud}&{longitud}")
+    Repartidor repartidorCercano(@PathVariable double latitud, @PathVariable double longitud) {
+
+        List<Repartidor> listaRepartidores = (List<Repartidor>) repartidorRepo.findAll();
+        Repartidor reCercano = null;
+        double distancia = 0.0;
+        double distanciaMenor = distanciaCoord(latitud, longitud, listaRepartidores.get(0).getLatitud(), listaRepartidores.get(0).getLongitud());
+
+        for (Repartidor repar : listaRepartidores) {
+            distancia = distanciaCoord(latitud, longitud, repar.getLatitud(), repar.getLongitud());
+            if (distancia <= distanciaMenor) {
+                distanciaMenor = distanciaCoord(latitud, longitud, repar.getLatitud(), repar.getLongitud());
+                reCercano = repar;
+            }
+        }
+        return reCercano;
+        //return listaRepartidores.get(0);
+    }
 }
 /*
 @PutMapping("/repartidor/{id}")

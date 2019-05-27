@@ -25,7 +25,9 @@ public interface RepartidorRepository extends PagingAndSortingRepository<Reparti
     List<Repartidor>findByDisponible(@Param("disponible")boolean disponible);
     List<Repartidor> findByNombre(@Param("nombre") String nombre);
     Repartidor findByEnvioId(@Param("envio_Id")Long envio_Id);
-  //  Repartidor repartidorCercano(@Param("latitud") double latitud, @Param("longitud") double longitud);
+   // Page<Repartidor> findAll(Pageable pageable);
+   // List<Repartidor> findAllByNombre(String nombre, Pageable pageable);
+    //  Repartidor repartidorCercano(@Param("latitud") double latitud, @Param("longitud") double longitud);
     
    // Repartidor findClosest(@Param("latitud") double latitud,@Param("longitud")  double longitud);
     
