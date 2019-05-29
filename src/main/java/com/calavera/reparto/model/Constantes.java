@@ -14,4 +14,5 @@ public class Constantes {
     public static final String ENVIOPENDIENTE="Pendiente";
     public static final String ENVIOREPARTO="Reparto";
     public static final String ENVIOFINALIZADO="Finalizado";
+    public static final String ENVIOPERDIDO="Perdido";
 }

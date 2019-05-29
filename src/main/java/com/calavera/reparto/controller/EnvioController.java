@@ -126,52 +126,7 @@ class EnvioController {
         return repCercano;
     }
     
-    //PORBAR!!!!!!!!!!!!!!
-    /**
-     * Un cliente registrado cuyo id entra por paramentro indica el 
-     * cliente receptor del envio ya hecho que todavia está pendiente
-     * que será cliente registrado, sí el envio ya ha sido repartido 
-     * o está en raparto devolverá nulo
-     * 
-     * @param id
-     * @param envioId
-     * @param idClienteDestino
-     * @param newEnvio
-     * @return envio
-     
-    @PutMapping("/envio/{envioId}/cliente/{id}/enviar/{idClienteDestino}")
-    Envio envioFromCliente(@PathVariable Long id, @PathVariable Long envioId,
-            @PathVariable Long idClienteDestino, @RequestBody Envio newEnvio) {
-        //  Cliente c = clienteRepository.findById(id).get();
-        Envio envio = envioRepository.findById(envioId)
-                .orElseThrow(() -> new EnvioNotFoundException(id));
-        Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new ClienteNotFoundException(id));
-        Cliente clienteDestino = clienteRepository.findById(idClienteDestino)
-                .orElseThrow(() -> new ClienteNotFoundException(idClienteDestino));
-        
-        if(envio.getEstado().equals(Constantes.ENVIOPENDIENTE)){
-        
-        envio.setIdClienteOrigen(id);
-        envio.setCliente(clienteDestino);
-        //Entendemos que el cliente tiene su posición y direccion actualizada
-        // con el método updateClientePosicion()
-        envio.setLatitud(cliente.getLatitud());
-        envio.setLongitud(cliente.getLongitud());
-        envio.setDireccionOrigen(cliente.getDireccion());
-        envio.setDetalles(newEnvio.getDetalles());
-        envio.setFecha(newEnvio.getFecha());
-        //Cambia la direccón de destino del paquete a la del cliente
-        envio.setDireccionDestino(clienteDestino.getDireccion());
-       
-        envio.setEstado(Constantes.ENVIOPENDIENTE);
-       // envioRepository.save(envio);
-        
-        return envioRepository.save(envio);
-        }
-        return null;
-    }
-    */
+
     /**
      * Un cliente registrado cuyo id entra por paramentro hace un envio nuevo a
      * otro cliente registrado (@RequestBody Envio newEnvio)
@@ -236,7 +191,8 @@ class EnvioController {
     }
     
     /**
-     * El usuario escribe el estado de los paquetes que desea ver
+     * El usuario escribe el estado de los paquetes que desea ver,
+     * "Perdido", "Reparto", "Finalizado", "Pendiente".
      * 
      * @param estado
      * @return List <Envio> enviosList
@@ -252,3 +208,49 @@ class EnvioController {
         envioRepository.deleteById(id);
     }
 }
+    //PORBAR!!!!!!!!!!!!!!
+    /**
+     * Un cliente registrado cuyo id entra por paramentro indica el 
+     * cliente receptor del envio ya hecho que todavia está pendiente
+     * que será cliente registrado, sí el envio ya ha sido repartido 
+     * o está en raparto devolverá nulo
+     * 
+     * @param id
+     * @param envioId
+     * @param idClienteDestino
+     * @param newEnvio
+     * @return envio
+     
+    @PutMapping("/envio/{envioId}/cliente/{id}/enviar/{idClienteDestino}")
+    Envio envioFromCliente(@PathVariable Long id, @PathVariable Long envioId,
+            @PathVariable Long idClienteDestino, @RequestBody Envio newEnvio) {
+        //  Cliente c = clienteRepository.findById(id).get();
+        Envio envio = envioRepository.findById(envioId)
+                .orElseThrow(() -> new EnvioNotFoundException(id));
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new ClienteNotFoundException(id));
+        Cliente clienteDestino = clienteRepository.findById(idClienteDestino)
+                .orElseThrow(() -> new ClienteNotFoundException(idClienteDestino));
+        
+        if(envio.getEstado().equals(Constantes.ENVIOPENDIENTE)){
+        
+        envio.setIdClienteOrigen(id);
+        envio.setCliente(clienteDestino);
+        //Entendemos que el cliente tiene su posición y direccion actualizada
+        // con el método updateClientePosicion()
+        envio.setLatitud(cliente.getLatitud());
+        envio.setLongitud(cliente.getLongitud());
+        envio.setDireccionOrigen(cliente.getDireccion());
+        envio.setDetalles(newEnvio.getDetalles());
+        envio.setFecha(newEnvio.getFecha());
+        //Cambia la direccón de destino del paquete a la del cliente
+        envio.setDireccionDestino(clienteDestino.getDireccion());
+       
+        envio.setEstado(Constantes.ENVIOPENDIENTE);
+       // envioRepository.save(envio);
+        
+        return envioRepository.save(envio);
+        }
+        return null;
+    }
+    */

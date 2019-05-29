@@ -40,12 +40,12 @@ public class RepartidorController {
         this.envioRepo = eRepository;
     }
 
-   // @GetMapping("/repartidor")
+    // @GetMapping("/repartidor")
     //@GetMapping(value="/repartidor", produces= MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
     //@RequestMapping(value = "/repartidor", method = RequestMethod.GET,produces={MediaType.APPLICATION_JSON_UTF8_VALUE},headers = "Accept=application/json"
     //@GetMapping("/repartidor")
     //@ResponseBody
-    @RequestMapping(value = "/repartidor", method = RequestMethod.GET,produces="application/json")
+    @RequestMapping(value = "/repartidor", method = RequestMethod.GET, produces = "application/json")
     Iterable<Repartidor> all() {
         return repartidorRepo.findAll();
     }
@@ -61,6 +61,27 @@ public class RepartidorController {
 
         return repartidorRepo.findById(id)
                 .orElseThrow(() -> new RepartidorNotFoundException(id));
+    }
+
+    /**
+     * Busca el envio en reparto que tiene asignado el repartidor actualmente
+     * devolviendo el objeto envio. Si no tiene ningún reparto asignado devuleve
+     * nulo
+     *
+     * @param id
+     * @return envio
+     */
+    @GetMapping("/repartidor/{id}/MiEnvio")
+    Envio getEnvioActualDeRepartidor(@PathVariable Long id) {
+        repartidorRepo.findById(id)
+                .orElseThrow(() -> new RepartidorNotFoundException(id));
+        List<Envio> enviosReparto = envioRepo.findByEstado(Constantes.ENVIOREPARTO);
+        for (Envio en : enviosReparto) {
+            if (en.getRepartidor().getId().equals(id)) {
+                return en;
+            }
+        }
+        return null;
     }
 
     /**
@@ -111,21 +132,21 @@ public class RepartidorController {
     }
 
     /**
-     * Un repartidor actualiza su posición, y asigna los envios pendientes a los 
-     * repartidores disponibles
+     * Un repartidor actualiza su posición, y asigna los envios pendientes a los
+     * repartidores disponibles y los devuelve en una lista
      *
      * @param Repartidor rep
      * @param id
      * @return Repartidor repartidor
      */
     @PutMapping("/repartidor/posicion/{id}")
-    Repartidor updatePosicionRepartidor(@RequestBody Repartidor rep, @PathVariable Long id) {
+    List<Envio> updatePosicionRepartidor(@RequestBody Repartidor rep, @PathVariable Long id) {
 
         return repartidorRepo.findById(id)
                 .map(repartidor -> {
                     repartidor.setLatitud(rep.getLatitud());
                     repartidor.setLongitud(rep.getLongitud());
-                    asignarEnviosPendientes();
+                    List<Envio> enviosAsignados = asignarEnviosPendientes();
                     //Asigna envios pendienttes a 
                     //repartidores disponibles
                     /*
@@ -135,8 +156,9 @@ public class RepartidorController {
 
                         //envioRepo.save(envioAsignado);
                     }
-                    */
-                    return repartidorRepo.save(repartidor);
+                     */
+                    repartidorRepo.save(repartidor);
+                    return enviosAsignados; // repartidorRepo.save(repartidor);
                 })
                 .orElseThrow(() -> new RepartidorNotFoundException(id));
     }
@@ -166,13 +188,13 @@ public class RepartidorController {
 
     /**
      * Cambia manualmente la disponibilidad del repartidor
-     * 
+     *
      * @param id
-     * @return 
+     * @return
      */
     @PutMapping("/repartidor/dis/{id}/{disponible}")
     Repartidor updateRepartidorDisponibilidad(@PathVariable Long id,
-            @PathVariable boolean disponible ) {
+            @PathVariable boolean disponible) {
 
         return repartidorRepo.findById(id)
                 .map(repartidor -> {
@@ -189,16 +211,15 @@ public class RepartidorController {
         repartidorRepo.deleteById(id);
     }
 
-    
     /**
-     * Calcula la distancia entre dos puntos, recibe las coordenadas
-     * latitud y longitud de cada.
-     * 
+     * Calcula la distancia entre dos puntos, recibe las coordenadas latitud y
+     * longitud de cada.
+     *
      * @param lat1
      * @param lng1
      * @param lat2
      * @param lng2
-     * @return 
+     * @return
      */
     public static double distanciaCoord(double lat1, double lng1, double lat2, double lng2) {
 
@@ -214,40 +235,39 @@ public class RepartidorController {
         return distancia;
     }
 
-    
-    /** 
-     * 
+    /**
+     *
      * Asigna los repartidores disponibles más cercanos a los envios con estado
      * "Pendiente"
-     * 
+     *
      * @return listaEnviosAsignados
      */
-    public List<Envio> asignarEnviosPendientes(){
+    public List<Envio> asignarEnviosPendientes() {
         List<Envio> listaEnviosPendientes = envioRepo.findByEstado(Constantes.ENVIOPENDIENTE);
         Repartidor reCercano = null;
         //double distancia = 0.0;
         //double distanciaMenor = distanciaCoord(latitudEnvio, longitudEnvio, listaRepartidores.get(0).getLatitud(), listaRepartidores.get(0).getLongitud());
 
         for (Envio envio : listaEnviosPendientes) {
-           reCercano = calcularRepartidorDisponibleCercano(envio.getLatitud(), envio.getLongitud());
-            
-           reCercano.setEnvioId(envio.getId());
-           reCercano.setDisponible(false);
-           /*
+            reCercano = calcularRepartidorDisponibleCercano(envio.getLatitud(), envio.getLongitud());
+
+            reCercano.setEnvioId(envio.getId());
+            reCercano.setDisponible(false);
+            /*
             distancia = distanciaCoord(latitudEnvio, longitudEnvio, repar.getLatitud(), repar.getLongitud());
             if (distancia <= distanciaMenor) {
                 distanciaMenor = distanciaCoord(latitudEnvio, longitudEnvio, repar.getLatitud(), repar.getLongitud());
                 reCercano = repar;
             }
-            */
+             */
         }
         return listaEnviosPendientes;
     }
-    
+
     /**
-     * Recibe la latidud y longitud del envio, y calcula el repartidor 
+     * Recibe la latidud y longitud del envio, y calcula el repartidor
      * disponible más cercano
-     * 
+     *
      * @param latitudEnvio
      * @param longitudEnvio
      * @return repartidorCerano
@@ -267,10 +287,10 @@ public class RepartidorController {
         }
         return reCercano;
     }
-    
+
     /**
      * Devuelve los todos los envios que tiene o ha tenido un Repartidor
-     * 
+     *
      * @param id
      * @return envios
      */
@@ -278,15 +298,15 @@ public class RepartidorController {
     List<Envio> historialEnvios(@PathVariable Long id) {
 
         Repartidor repartidor = repartidorRepo.findById(id)
-                .orElseThrow(() -> new RepartidorNotFoundException(id));   
+                .orElseThrow(() -> new RepartidorNotFoundException(id));
         List<Envio> envios = envioRepo.findByRepartidorId(id);
 
         return envios;
     }
-    
+
     /**
      * Recomendable usar antes asignarEnviosPendientes
-     * 
+     *
      * Asigna envio pendiente más cercano al repartidor si existe uno
      *
      * @param repartidor
@@ -318,12 +338,13 @@ public class RepartidorController {
         //Mirar si se puede dar un mensaje si no hay paquetes para dar
         return enCercano;
     }
-    
+
     /**
      * Recomendable usar antes asignarEnviosPendientes
-     * 
+     *
      * Calcula el repartidor más cercano con respecto a la latitud y logitud
      * introducidas
+     *
      * @param latitud
      * @param longitud
      * @return repartidor
@@ -346,6 +367,29 @@ public class RepartidorController {
         return reCercano;
         //return listaRepartidores.get(0);
     }
+/**
+ * Cambia el estado del Envio a Perdido, y pone al Repartidor a disponible y 
+ * su id de envio actual a nulo
+ * 
+ * @param repartidorId
+ * @param envioId
+ * @return envio
+ */
+    @PutMapping("/repartidor/{repartidorId}/envio/{envioId}/perdido")
+    Envio PerdidaEnvioRepartidor(@PathVariable Long repartidorId, @PathVariable Long envioId) {
+
+       Envio en = envioRepo.findById(envioId)
+                .orElseThrow(() -> new EnvioNotFoundException(envioId));  
+        Repartidor rep = repartidorRepo.findById(repartidorId)
+                .orElseThrow(() -> new RepartidorNotFoundException(repartidorId));
+        if(en.getEstado().equals(Constantes.ENVIOREPARTO)){
+            en.setEstado(Constantes.ENVIOPERDIDO);
+            rep.setDisponible(true);
+            rep.setEnvioId(null);    
+        }
+        return envioRepo.save(en);
+    }
+
 }
 /*
 @PutMapping("/repartidor/{id}")
