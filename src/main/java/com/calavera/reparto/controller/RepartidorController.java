@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
- * @author admin
+ * @author Álvaro Lovera Almagro
  */
 @RestController
 public class RepartidorController {
@@ -219,7 +219,7 @@ public class RepartidorController {
      * @param lng1
      * @param lat2
      * @param lng2
-     * @return
+     * @return distancia
      */
     public static double distanciaCoord(double lat1, double lng1, double lat2, double lng2) {
 
