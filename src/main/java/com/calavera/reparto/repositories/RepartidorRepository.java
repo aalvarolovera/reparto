@@ -7,9 +7,8 @@ package com.calavera.reparto.repositories;
 
 /**
  *
- * @author Antonio
+ * @author Álvaro Lovera Almagro
  */
-
 import com.calavera.reparto.model.Repartidor;
 import java.util.List;
 // import org.springframework.data.jpa.repository.JpaRepository;

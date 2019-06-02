@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
- * @author admin
+ * @author Álvaro Lovera Almagro
  */
 @RestController
 public class ClienteController {

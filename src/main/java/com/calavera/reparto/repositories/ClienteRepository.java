@@ -7,7 +7,7 @@ package com.calavera.reparto.repositories;
 
 /**
  *
- * @author Antonio
+ * @author Álvaro Lovera Almagro
  */
 
 import com.calavera.reparto.model.Cliente;

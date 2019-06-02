@@ -14,7 +14,7 @@ import javax.persistence.Id;
 
 /**
  *
- * @author admin
+ * @author Álvaro Lovera Almagro
  */
 @Entity
 public class Cliente implements Serializable {

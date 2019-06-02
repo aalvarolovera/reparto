@@ -15,7 +15,7 @@ import javax.persistence.ManyToOne;
 
 /**
  *
- * @author admin
+ * @author Álvaro Lovera Almagro
  */
 @Entity
 public class Envio implements Serializable {

@@ -14,7 +14,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 /**
  *
- * @author admin
+ * @author Álvaro Lovera Almagro
  */
 @RepositoryRestResource(collectionResourceRel = "envio", path = "envio")
 public interface EnvioRepository extends PagingAndSortingRepository<Envio, Long>{

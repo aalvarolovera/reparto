@@ -7,7 +7,7 @@ package com.calavera.reparto.model;
 
 /**
  *
- * @author admin
+ * @author Álvaro Lovera Almagro
  */
 public class Constantes {
     public static final double RADIOTIERRA = 6371;
