@@ -253,6 +253,8 @@ public class RepartidorController {
 
             reCercano.setEnvioId(envio.getId());
             reCercano.setDisponible(false);
+            envio.setRepartidor(reCercano);
+            envio.setEstado(Constantes.ENVIOREPARTO);
             /*
             distancia = distanciaCoord(latitudEnvio, longitudEnvio, repar.getLatitud(), repar.getLongitud());
             if (distancia <= distanciaMenor) {
