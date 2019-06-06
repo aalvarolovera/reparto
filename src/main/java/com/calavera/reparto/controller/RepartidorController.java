@@ -94,7 +94,7 @@ public class RepartidorController {
      * @param envioId
      * @return
      */
-    @PutMapping("/repartidor/{repartidorId}/envio/{envioId}/finalizado")
+    @PutMapping("/repartidor/{repartidorId}/envio/{envioId}/finalizado0")
     Repartidor repartidorEntregaEnvio(@RequestBody Repartidor rep,
             @PathVariable Long repartidorId, @PathVariable Long envioId) {
         envioRepo.findById(envioId)
@@ -376,7 +376,7 @@ public class RepartidorController {
  * @return envio
  */
     @PutMapping("/repartidor/{repartidorId}/envio/{envioId}/perdido")
-    Envio PerdidaEnvioRepartidor(@PathVariable Long repartidorId, @PathVariable Long envioId) {
+    Envio perdidaEnvioRepartidor(@PathVariable Long repartidorId, @PathVariable Long envioId) {
 
        Envio en = envioRepo.findById(envioId)
                 .orElseThrow(() -> new EnvioNotFoundException(envioId));  
