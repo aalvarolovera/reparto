@@ -22,6 +22,7 @@ public class Cliente implements Serializable {
     private Long id;
     private String nombre;
     private String apellidos;
+    @Column(nullable = false,unique = true)
     private String dni;
     @Column(nullable = true)
     private double latitud;

@@ -94,8 +94,8 @@ public class RepartidorController {
      * @param envioId
      * @return
      */
-    @PutMapping("/repartidor/{repartidorId}/envio/{envioId}/finalizado0")
-    Repartidor repartidorEntregaEnvio(@RequestBody Repartidor rep,
+    @PutMapping("/repartidor/{repartidorId}/envio/{envioId}/finalizado")
+    Envio repartidorEntregaEnvio(@RequestBody Repartidor rep,
             @PathVariable Long repartidorId, @PathVariable Long envioId) {
         envioRepo.findById(envioId)
                 .orElseThrow(() -> new EnvioNotFoundException(envioId));
@@ -104,8 +104,8 @@ public class RepartidorController {
                     //  repartidor.setDni(rep.getDni());
                     // repartidor.setNombre(rep.getNombre());
                     // repartidor.setApellidos(rep.getApellidos());
-                    repartidor.setLatitud(rep.getLatitud());
-                    repartidor.setLongitud(rep.getLongitud());
+                  //  repartidor.setLatitud(rep.getLatitud());
+                   // repartidor.setLongitud(rep.getLongitud());
                     //Comprueba si el envio tiene ese repartidor asignado
                     //y si el envio está en estado "Pendiente"
                     if (envioRepo.findById(envioId).get().getRepartidor().getId().equals(repartidorId)
@@ -125,10 +125,10 @@ public class RepartidorController {
                         envioRepo.save(envioFinalizado);
                     }
                     //repartidor.setDisponible(true);
-                    return repartidorRepo.save(repartidor);
+                    return envioRepo.findById(envioId).get();
                 })
                 .orElseThrow(() -> new RepartidorNotFoundException(repartidorId));
-        return rep;
+        return envioRepo.findById(envioId).get();
     }
 
     /**
@@ -158,6 +158,8 @@ public class RepartidorController {
                     }
                      */
                     repartidorRepo.save(repartidor);
+                    //!!!!!!!!!!!!!!!!!!!!!!!!!!envioRepo.findByRepartidorId(id);
+                    
                     return enviosAsignados; // repartidorRepo.save(repartidor);
                 })
                 .orElseThrow(() -> new RepartidorNotFoundException(id));
@@ -250,11 +252,13 @@ public class RepartidorController {
 
         for (Envio envio : listaEnviosPendientes) {
             reCercano = calcularRepartidorDisponibleCercano(envio.getLatitud(), envio.getLongitud());
-
-            reCercano.setEnvioId(envio.getId());
-            reCercano.setDisponible(false);
-            envio.setRepartidor(reCercano);
-            envio.setEstado(Constantes.ENVIOREPARTO);
+                if(reCercano!=null){
+                    reCercano.setEnvioId(envio.getId());
+                    reCercano.setDisponible(false);
+                    envio.setRepartidor(reCercano);
+                    envio.setEstado(Constantes.ENVIOREPARTO);
+                }
+            
             /*
             distancia = distanciaCoord(latitudEnvio, longitudEnvio, repar.getLatitud(), repar.getLongitud());
             if (distancia <= distanciaMenor) {

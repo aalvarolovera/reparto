@@ -22,6 +22,7 @@ public class Repartidor implements Serializable {
     private Long id;
     private String nombre;
     private String apellidos;
+    @Column(nullable = false,unique = true)
     private String dni;
     private boolean disponible;
     private double latitud;
